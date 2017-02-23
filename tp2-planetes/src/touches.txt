@@ -1,0 +1,16 @@
+    q:  Quitter l'application
+    x:  Activer/désactiver l'affichage des axes
+    v:  Recharger les fichiers des nuanceurs et recréer le programme
+    ESPACE:  Mettre en pause ou reprendre l'animation
+    p:  Atténuer ou non la couleur selon la profondeur
+    g:  Permuter l'affichage en fil de fer ou plein
+    PLUS:  Incrémenter la distance de la caméra
+    MOINS:  Décrémenter la distance de la caméra
+    CROCHETDROIT:  Augmenter l'angle du plan de coupe
+    CROCHETGAUCHE:  Diminuer l'angle du plan de coupe
+    m:  Choisir le modèle: 1-sphère, 2-cube, 3-théière (déjà implanté)
+    c:  Augmenter le facteur de réchauffement
+    f:  Diminuer le facteur de réchauffement
+    BOUTON_GAUCHE:  Modifier le point de vue
+    BOUTON_DROIT:  Sélectionner des objets
+    Molette:  Déplacer le plan de coupe

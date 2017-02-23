@@ -1,0 +1,25 @@
+    q:  Quitter l'application
+    x:  Activer/désactiver l'affichage des axes
+    v:  Recharger les fichiers des nuanceurs et recréer le programme
+    i:  Réinitiliaser le point de vue
+    l:  Basculer l'utilisation de LookAt ou de Translate+Rotate pour placer la caméra
+    g:  Permuter l'affichage en fil de fer ou plein
+    m:  Choisir le modèle affiché: cube, théière
+    MOINS:  Reculer la caméra
+    PLUS:  Avancer la caméra
+    DROITE:  Déplacer la bestiole vers +X
+    GAUCHE:  Déplacer la bestiole vers -X
+    PAGEPREC:  Déplacer la bestiole vers +Y
+    PAGESUIV:  Déplacer la bestiole vers -Y
+    BAS:  Déplacer la bestiole vers +Z
+    HAUT:  Déplacer la bestiole vers -Z
+    FIN:  Diminuer la taille du corps
+    DEBUT:  Augmenter la taille du corps
+    VIRGULE:  Tourner la bestiole dans le sens anti-horaire
+    POINT:  Tourner la bestiole dans le sens horaire
+    CROCHETGAUCHE:  Diminuer l'angle des pattes
+    CROCHETDROIT:  Augmenter l'angle des pattes
+    b:  Incrémenter la dimension de la boite
+    h:  Décrémenter la dimension de la boite
+    ESPACE:  Mettre en pause ou reprendre l'animation
+    BOUTON_GAUCHE:  Déplacer (modifier angles) la caméra

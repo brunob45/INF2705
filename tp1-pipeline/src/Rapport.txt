@@ -1,0 +1,16 @@
+Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
+    de coordonnées « main gauche » (au lieu du l'habituel « main droite »).
+    Comment devrait-on alors modifier les matrices 4x4 servant à la rotation
+    afin de préserver le même effet visuel d'une rotation positive?
+
+	il faudrait inverser le signe des valeurs de x, y et z.
+
+Q2: Dans ce TP, il serait logique que la tête de la bestiole soit toujours
+    dirigée dans le sens de son mouvement.  Décrivez (avec assez de détails)
+    comment vous implanteriez ceci dans ce TP.
+
+	au lieu de modifier la direction du modele lors d'une collision avec 
+	le mur, il faudrait effectuer une rotation du modele et toujours le 
+	faire bouger vers "devant".
+	Il faut calculer l'angle de sortie en fonction de l'angle d'entree et 
+	de l'orientation du mur en contact.

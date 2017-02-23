@@ -1,0 +1,29 @@
+Q1: Dans le nuanceur de sommets, si on souhaite calculer la profondeur du
+    sommet dans le repère de la caméra, on peut utiliser cette formule :
+
+    « out float profondeur = -( matrVisu * matrModel * Vertex ).z; »
+
+    Pourquoi doit-on inverser le signe du résultat calculé ?
+
+	
+	En faisant (matrVisu * matrModel * Vertex), nous obtenons la position du vertex dans l'espace.
+	Puisque en OpenGL, la coordonnee Z augmente en allant VERS l'obervateur, il faut inverser
+	le signe pour avoir des coordonnees ascendantes plus on s'eloigne.
+
+Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
+    profondeur dans le nuanceur de fragments, que se passe-t-il si on
+    remplace.
+
+    « d = gl_FragCoord.z / gl_FragCoord.w; »
+
+    par seulement l'utilisation de z ou de w avec
+
+    « d = gl_FragCoord.z; » ou
+    « d = gl_FragCoord.w; » ?
+
+    Comment expliquez-vous les comportements observés dans un cas ou l'autre?
+
+	Apres avoir teste les deux cas de test, j'ai observe le meme comportement
+	du shader de fragment : il n'effectuait aucune transformation.
+	La seule methode valide pour obtenir la profondeur est donc : 
+	(gl_FragCoord.z / gl_FragCoord.w).

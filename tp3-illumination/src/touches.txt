@@ -1,0 +1,23 @@
+    q:  Quitter l'application
+    x:  Activer/désactiver l'affichage des axes
+    v:  Recharger les fichiers des nuanceurs et recréer le programme
+    p:  Permuter la projection: perspective ou orthogonale
+    i:  Alterner entre le modèle d'illumination: Lambert, Gouraud, Phong
+    r:  Alterner entre le modèle de réflexion spéculaire: Phong, Blinn
+    s:  Alterner entre le modèle de spot: OpenGL, Direct3D
+    a:  Incrémenter l'angle du cône du spot
+    z:  Décrémenter l'angle du cône du spot
+    d:  Incrémenter l'exposant du spot
+    e:  Décrémenter l'exposant du spot
+    j:  Incrémenter le coefficient de brillance
+    u:  Décrémenter le coefficient de brillance
+    m:  Choisir le modèle affiché: cube, tore, sphère, théière, cube, cylindre, cône
+    t:  Choisir la texture utilisée: aucune, dé, échiquier
+    o:  Changer l'affichage des texels noirs (noir, mi-coloré, transparent)
+    g:  Permuter l'affichage en fil de fer ou plein
+    n:  Utiliser ou non les normales calculées comme couleur (pour le débogage)
+    ESPACE:  Permuter la rotation automatique du modèle
+    BOUTON_GAUCHE:  Tourner l'objet
+    BOUTON_MILIEU:  Modifier l'orientation du spot
+    BOUTON_DROIT:  Déplacer la lumière
+    Molette:  Changer la taille du spot
