@@ -23,13 +23,13 @@ layout (std140) uniform varsUnif
 in Attribs {
    vec4 couleur;
    vec3 normale;
-   vec3 lumiDir, obsvec;
+   vec3 lumiDir, obsVec;
 } AttribsIn[];
 
 out Attribs {
    vec4 couleur;
    vec3 normale;
-   vec3 lumiDir, obsvec;
+   vec3 lumiDir, obsVec;
 } AttribsOut;
 
 void main()
@@ -39,6 +39,10 @@ void main()
    {
       gl_Position = gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
+      AttribsOut.normale = AttribsIn[i].normale;
+      AttribsOut.lumiDir = AttribsIn[i].lumiDir;
+      AttribsOut.obsVec = AttribsIn[i].obsVec;
+      
       EmitVertex();
    }
 }

@@ -53,7 +53,7 @@ uniform sampler2D laTexture;
 in Attribs {
    vec4 couleur;
    vec3 normale;
-   vec3 lumiDir, obsvec;
+   vec3 lumiDir, obsVec;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -65,36 +65,50 @@ float calculerSpot( in vec3 spotDir, in vec3 L )
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 {
-	// ajout de l’émission et du terme ambiant du modèle d’illumination
-	vec4 ret = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+	vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+
+
+   // calcul de la composante ambiante
+   coul += FrontMaterial.ambient * LightSource[0].ambient;
+   //coul.a = AttribsIn.couleur.a;
+
+   // calcul de l'Ã©clairage seulement si le produit scalaire est positif
+   float NdotL = max( 0.0, dot( N, L ) );
+   if ( NdotL > 0.0 )
+   {
+      // calcul de la composante diffuse
+      //coul += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
+      coul += AttribsIn.couleur * LightSource[0].diffuse * NdotL; //(ici, on utilise plutÃ´t la couleur de l'objet)
+
+      // calcul de la composante spÃ©culaire (Blinn ou Phong)
+      float NdotHV = max( 0.0, ( utiliseBlinn ) ? dot( normalize( L + O ), N ) : dot( reflect( -L, N ), O ) );
+      coul += FrontMaterial.specular * LightSource[0].specular * ( ( NdotHV == 0.0 ) ? 0.0 : pow( NdotHV, FrontMaterial.shininess ) );
+   }
+   
+   //vec4 coul = AttribsIn.couleur * dot( N, L );
 	
-	// calcul de la composante ambiante de la 1e source de lumière
-	ret += FrontMaterial.ambient * LightSource[0].ambient;
-	
-	// produit scalaire pour le calcul de la réflexion diffuse
-	float NdotL = max (0.0, dot(N, L));
-	// calcul de la composante diffuse de la 1e source de lumière
-	ret += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
-	
-	// calcul de la composante spéculaire (selon Phong ou Blinn)
-	float NdotHV = max( 0.0, dot( normalize( L + O ), N ) );
-	// calcul de la composante spéculaire de la 1e source de lumière
-	ret += FrontMaterial.specular * LightSource[0].specular *
-        pow( NdotHV, FrontMaterial.shininess );
-      
-   return ret;
+   return clamp( coul, 0.0, 1.0 );
 }
 
 void main( void )
 {
+	
+   vec3 L = normalize( AttribsIn.lumiDir ); // vecteur vers la source lumineuse
+   vec3 N = normalize( AttribsIn.normale ); // vecteur normal
+   //vec3 N = normalize( gl_FrontFacing ? AttribsIn.normale : -AttribsIn.normale );
+   vec3 O = normalize( AttribsIn.obsVec );  // position de l'observateur
+
+   // assigner la couleur finale
+   FragColor = calculerReflexion(L, N, O);
+
+   //FragColor = clamp(vec4(N,1.0),0.,1.);
+	
 	/*
-	vec4 coul = calculerReflexion(normalize( AttribsIn.lumiDir ),
-	                              normalize( AttribsIn.normale ),
-	                              normalize( AttribsIn.obsvec  ) );
-/**/
+   // ...
+
    // assigner la couleur finale
    FragColor = AttribsIn.couleur;
-   //FragColor = clamp(coul, 0.0, 1.0 );
+   //FragColor = vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
 
-   //if ( afficheNormales ) FragColor = vec4(N,1.0);
+   //if ( afficheNormales ) FragColor = vec4(N,1.0);*/
 }

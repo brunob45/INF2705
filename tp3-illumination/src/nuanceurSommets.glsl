@@ -61,77 +61,51 @@ layout(location=8) in vec4 TexCoord;
 out Attribs {
    vec4 couleur;
    vec3 normale;
-   vec3 lumiDir, obsvec;
+   vec3 lumiDir, obsVec;
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 {
-	// ajout de l’émission et du terme ambiant du modèle d’illumination
-	vec4 ret = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+	vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+
+   // calcul de la composante ambiante
+   coul += FrontMaterial.ambient * LightSource[0].ambient;
+
+   // calcul de l'Ã©clairage seulement si le produit scalaire est positif
+   float NdotL = max( 0.0, dot( N, L ) );
+   if ( NdotL > 0.0 )
+   {
+      // calcul de la composante diffuse
+      coul += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
+      //coul += Color * LightSource[0].diffuse * NdotL; //(ici, on utilise plutÃ´t la couleur de l'objet)
+
+      // calcul de la composante spÃ©culaire (Blinn ou Phong)
+      float NdotHV = max( 0.0, ( utiliseBlinn ) ? dot( normalize( L + O ), N ) : dot( reflect( -L, N ), O ) );
+      coul += FrontMaterial.specular * LightSource[0].specular * ( ( NdotHV == 0.0 ) ? 0.0 : pow( NdotHV, FrontMaterial.shininess ) );
+   }
 	
-	// calcul de la composante ambiante de la 1e source de lumière
-	ret += FrontMaterial.ambient * LightSource[0].ambient;
-	
-	// produit scalaire pour le calcul de la réflexion diffuse
-	float NdotL = max (0.0, dot(N, L));
-	// calcul de la composante diffuse de la 1e source de lumière
-	ret += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
-	
-	// calcul de la composante spéculaire (selon Phong ou Blinn)
-	float NdotHV = max( 0.0, dot( normalize( L + O ), N ) );
-	// calcul de la composante spéculaire de la 1e source de lumière
-	ret += FrontMaterial.specular * LightSource[0].specular *
-        pow( NdotHV, FrontMaterial.shininess );
-      
-   return ret;
+   return clamp( coul, 0.0, 1.0 );
 }
 
 void main( void )
 {
-	
-	// calculer la position du sommet dans le repère de la caméra
-	vec3 pos = vec3( matrVisu * matrModel * Vertex );
-	
-	vec4 color;
-	vec3 L = (matrVisu * LightSource[0].position).xyz / LightSource[0].position.w - pos;
-	vec3 N = matrNormale * Normal;
-	vec3 O = normalize(-pos);
-	
-	
-	// transformation standard du sommet (ModelView et Projection)
-   gl_Position = matrProj * matrVisu * Vertex;
-   // ou gl_Position = matrProj * matrVisu * matrModel * Vertex;
+	// transformation standard du sommet (P * V * M * sommet)
+   gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
-   // normaliser le demi-vecteur (Blinn)
-   //vec3 halfV = normalize( vec3(LightSource[0].halfVector) );
-   // produit scalaire pour la rÃ©flexion spÃ©culaire
-   float NdotHV = max( 0.0, dot( normalize( L + O ), N ) );
+   // la couleur du sommet
+   AttribsOut.couleur = Color;
 
-   // composante diffuse (gl_LightSource[i].position est dÃ©jÃ  dans le repÃ¨re de la camÃ©ra)
-   color = FrontMaterial.diffuse * LightSource[0].diffuse * abs(dot(N,vec3(LightSource[0].position)));
-   // composante spÃ©culaire
-   color += FrontMaterial.specular * LightSource[0].specular * pow(NdotHV, FrontMaterial.shininess);
-   // composante ambiante
-   color += FrontMaterial.ambient * LightSource[0].ambient;
-   
-   AttribsOut.couleur = color;
-	
-/*	
-    // transformation standard du sommet
-    //gl_Position = matrProj * matrVisu * matrModel * Vertex;
-    gl_Position = matrVisu * matrModel * Vertex;
-    // multiplier matrProj apres [...]!
+   // calculer la normale qui sera interpolÃ©e pour le nuanceur de fragment
+   AttribsOut.normale = matrNormale * Normal;
 
-    // calculer la normale
-	AttribsOut.normale = matrNormale * Normal;
-	
-	// calculer la position du sommet dans le repère de la caméra
-	vec3 pos = vec3( matrVisu * matrModel * Vertex );
-	
-	AttribsOut.lumiDir = (matrVisu * LightSource[0].position).xyz / LightSource[0].position.w - pos;
-	
-	
-	AttribsOut.obsvec = normalize(-pos);
+   // calculer la position du sommet (dans le repÃ¨re de la camÃ©ra)
+   vec3 pos = vec3( matrVisu * matrModel * Vertex );
 
-	AttribsOut.couleur = Color;*/
+   // vecteur de la direction de la lumiÃ¨re (dans le repÃ¨re de la camÃ©ra)
+   AttribsOut.lumiDir = vec3( ( matrVisu * LightSource[0].position ).xyz - pos );
+
+   // vecteur de la direction vers l'observateur
+   AttribsOut.obsVec = ( LightModel.localViewer ?
+                         normalize(-pos) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la camÃ©ra
+                         vec3( 0.0, 0.0, 1.0 ) ); // on considÃ¨re que l'observateur (la camÃ©ra) est Ã  l'infini dans la direction (0,0,1)
 }

@@ -381,11 +381,11 @@ void initialiser()
    GLfloat normales[3*4*6] = 
    {
 	   0.0,  0.0, -1.0,    0.0,  0.0, -1.0,   0.0,  0.0, -1.0,    0.0,  0.0, -1.0,   // P3,P2,P0,P1
-       0.0, -1.0,  0.0,    0.0, -1.0,  0.0,   0.0,  0.0, -1.0,    0.0, -1.0,  0.0,   // P5,P4,P1,P0
-       1.0,  0.0,  0.0,    1.0,  0.0,  0.0,   1.0,  0.0,  0.0,    1.0,  0.0,  0.0,   // P6,P5,P2,P1
-       0.0,  1.0,  0.0,    0.0,  1.0,  0.0,   0.0,  1.0,  0.0,    0.0,  1.0,  0.0,   // P7,P6,P3,P2
+       0.0, -1.0,  0.0,    0.0, -1.0,  0.0,   0.0, -1.0,  0.0,    0.0, -1.0,  0.0,   // P5,P4,P1,P0
+      +1.0,  0.0,  0.0,   +1.0,  0.0,  0.0,  +1.0,  0.0,  0.0,   +1.0,  0.0,  0.0,   // P6,P5,P2,P1
+       0.0, +1.0,  0.0,    0.0, +1.0,  0.0,   0.0, +1.0,  0.0,    0.0, +1.0,  0.0,   // P7,P6,P3,P2
       -1.0,  0.0,  0.0,   -1.0,  0.0,  0.0,  -1.0,  0.0,  0.0,   -1.0,  0.0,  0.0,   // P4,P7,P0,P3
-       0.0,  0.0,  1.0,    0.0,  0.0,  1.0,   0.0,  0.0,  1.0,    0.0,  0.0,  1.0    // P4,P5,P7,P6
+       0.0,  0.0, +1.0,    0.0,  0.0, +1.0,   0.0,  0.0, +1.0,    0.0,  0.0, +1.0    // P4,P5,P7,P6
    };
 
    // allouer les objets OpenGL
@@ -399,11 +399,13 @@ void initialiser()
    glBufferData( GL_ARRAY_BUFFER, sizeof(sommets), sommets, GL_STATIC_DRAW );
    glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
    glEnableVertexAttribArray(locVertex);
+   
    // (partie 1) charger le VBO pour les normales
    glBindBuffer( GL_ARRAY_BUFFER, vbo[1] );
    glBufferData( GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW );
    glVertexAttribPointer( locNormal, 3, GL_FLOAT, GL_FALSE, 0, 0 );
    glEnableVertexAttribArray(locNormal);
+   
    // (partie 3) charger le VBO pour les coordonnées de texture
    // ...
 
@@ -471,6 +473,8 @@ void afficherModele()
 
       glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
       // (partie 1: ne pas oublier de calculer et donner une matrice pour les transformations des normales)
+	  glUniformMatrix3fv( locmatrNormale, 1, GL_TRUE, // on transpose
+	  glm::value_ptr( glm::inverse( glm::mat3( matrVisu.getMatr()*matrModel.getMatr() ) ) ) );
 
       switch ( modele )
       {
