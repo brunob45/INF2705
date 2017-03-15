@@ -77,8 +77,8 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
    if ( NdotL > 0.0 )
    {
       // calcul de la composante diffuse
-      //coul += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
-      coul += AttribsIn.couleur * LightSource[0].diffuse * NdotL; //(ici, on utilise plutÃ´t la couleur de l'objet)
+      coul += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
+      //coul += AttribsIn.couleur * LightSource[0].diffuse * NdotL; //(ici, on utilise plutÃ´t la couleur de l'objet)
 
       // calcul de la composante spÃ©culaire (Blinn ou Phong)
       float NdotHV = max( 0.0, ( utiliseBlinn ) ? dot( normalize( L + O ), N ) : dot( reflect( -L, N ), O ) );
@@ -99,16 +99,13 @@ void main( void )
    vec3 O = normalize( AttribsIn.obsVec );  // position de l'observateur
 
    // assigner la couleur finale
-   FragColor = calculerReflexion(L, N, O);
-
-   //FragColor = clamp(vec4(N,1.0),0.,1.);
-	
-	/*
-   // ...
-
-   // assigner la couleur finale
-   FragColor = AttribsIn.couleur;
-   //FragColor = vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
-
-   //if ( afficheNormales ) FragColor = vec4(N,1.0);*/
+   
+   if(typeIllumination == 0 || typeIllumination == 2)
+   {
+	  FragColor = calculerReflexion(L, N, O);
+   }
+   else
+   {
+      FragColor = AttribsIn.couleur;
+   }
 }

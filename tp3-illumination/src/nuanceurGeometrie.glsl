@@ -34,12 +34,33 @@ out Attribs {
 
 void main()
 {
+	vec3 normaleMoy = normalize((cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, 
+							gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz )));
+							
+	/*if(typeIllumination == 0)
+	{
+		for ( int i = 0 ; i < gl_in.length() ; ++i )
+		{
+			normaleMoy += AttribsIn[i].normale;
+		}
+		normaleMoy /= gl_in.length();
+	}*/
+	
    // émettre les sommets
    for ( int i = 0 ; i < gl_in.length() ; ++i )
    {
-      gl_Position = gl_in[i].gl_Position;
+      gl_Position = matrProj * gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
-      AttribsOut.normale = AttribsIn[i].normale;
+      
+      if(typeIllumination == 0)
+      {
+		  AttribsOut.normale = normaleMoy;
+	  }
+	  else
+	  {
+		  AttribsOut.normale = AttribsIn[i].normale;
+	  }
+	  
       AttribsOut.lumiDir = AttribsIn[i].lumiDir;
       AttribsOut.obsVec = AttribsIn[i].obsVec;
       

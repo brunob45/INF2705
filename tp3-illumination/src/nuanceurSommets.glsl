@@ -90,22 +90,35 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 void main( void )
 {
 	// transformation standard du sommet (P * V * M * sommet)
-   gl_Position = matrProj * matrVisu * matrModel * Vertex;
-
-   // la couleur du sommet
-   AttribsOut.couleur = Color;
+   gl_Position = matrVisu * matrModel * Vertex;
 
    // calculer la normale qui sera interpolÃ©e pour le nuanceur de fragment
-   AttribsOut.normale = matrNormale * Normal;
+   vec3 N = matrNormale * Normal;
+   AttribsOut.normale = N;
 
    // calculer la position du sommet (dans le repÃ¨re de la camÃ©ra)
    vec3 pos = vec3( matrVisu * matrModel * Vertex );
 
    // vecteur de la direction de la lumiÃ¨re (dans le repÃ¨re de la camÃ©ra)
-   AttribsOut.lumiDir = vec3( ( matrVisu * LightSource[0].position ).xyz - pos );
+   vec3 L = vec3( ( matrVisu * LightSource[0].position ).xyz - pos );
+   AttribsOut.lumiDir = L;
 
    // vecteur de la direction vers l'observateur
-   AttribsOut.obsVec = ( LightModel.localViewer ?
-                         normalize(-pos) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la camÃ©ra
-                         vec3( 0.0, 0.0, 1.0 ) ); // on considÃ¨re que l'observateur (la camÃ©ra) est Ã  l'infini dans la direction (0,0,1)
+   vec3 O = ( LightModel.localViewer ?
+			 normalize(-pos) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la camÃ©ra
+			 vec3( 0.0, 0.0, 1.0 ) ); // on considÃ¨re que l'observateur (la camÃ©ra) est Ã  l'infini dans la direction (0,0,1)
+   AttribsOut.obsVec = O;
+
+
+
+   // la couleur du sommet
+   
+   if(typeIllumination == 1)
+   {
+      AttribsOut.couleur = calculerReflexion(L, N, O);
+   }
+   else
+   {
+      AttribsOut.couleur = Color;
+   }
 }
