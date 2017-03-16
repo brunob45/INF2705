@@ -24,17 +24,21 @@ in Attribs {
    vec4 couleur;
    vec3 normale;
    vec3 lumiDir, obsVec;
+   vec2 texCoord;
 } AttribsIn[];
 
 out Attribs {
    vec4 couleur;
    vec3 normale;
    vec3 lumiDir, obsVec;
+   vec2 texCoord;
 } AttribsOut;
 
 void main()
 {
 
+   vec3 normaleMoy = normalize((cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, 
+      gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz )));
 							
    // émettre les sommets
    for ( int i = 0 ; i < gl_in.length() ; ++i )
@@ -45,8 +49,6 @@ void main()
       if(typeIllumination == 0)
       {
 		  // Lambert
-		  vec3 normaleMoy = normalize((cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, 
-		    gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz )));
 		  AttribsOut.normale = normaleMoy;
 	  }
 	  else
@@ -57,6 +59,7 @@ void main()
 	  
       AttribsOut.lumiDir = AttribsIn[i].lumiDir;
       AttribsOut.obsVec = AttribsIn[i].obsVec;
+      AttribsOut.texCoord = AttribsIn[i].texCoord;
       
       EmitVertex();
    }

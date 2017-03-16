@@ -62,6 +62,7 @@ out Attribs {
    vec4 couleur;
    vec3 normale;
    vec3 lumiDir, obsVec;
+   vec2 texCoord;
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -109,8 +110,6 @@ void main( void )
 			 vec3( 0.0, 0.0, 1.0 ) ); // on considÃ¨re que l'observateur (la camÃ©ra) est Ã  l'infini dans la direction (0,0,1)
    AttribsOut.obsVec = O;
 
-
-
    // la couleur du sommet
    
    if(typeIllumination == 1)
@@ -123,4 +122,7 @@ void main( void )
 	  // Lambert ou Phong
       AttribsOut.couleur = Color;
    }
+   
+   // si le modele est le cube construit explicitement
+   AttribsOut.texCoord = texnumero == 2 && (TexCoord.w > 1 || TexCoord.w < 0.1) ? TexCoord.zw : TexCoord.xy;//( matrTexture * vec4(TexCoord.st,0.0,1.0) ).st;
 }

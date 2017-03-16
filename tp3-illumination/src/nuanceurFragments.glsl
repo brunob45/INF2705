@@ -54,6 +54,7 @@ in Attribs {
    vec4 couleur;
    vec3 normale;
    vec3 lumiDir, obsVec;
+   vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -111,7 +112,6 @@ void main( void )
 {
    vec3 L = normalize( AttribsIn.lumiDir ); // vecteur vers la source lumineuse
    vec3 N = normalize( AttribsIn.normale ); // vecteur normal
-   //vec3 N = normalize( gl_FrontFacing ? AttribsIn.normale : -AttribsIn.normale );
    vec3 O = normalize( AttribsIn.obsVec );  // position de l'observateur
    vec3 D = normalize( -LightSource[0].spotDirection );
 
@@ -122,8 +122,32 @@ void main( void )
    {
 	  // Lambert ou Phong
 	  couleur = calculerReflexion(L, N, O);
-   }
+   }   
    
    couleur *= calculerSpot(D, L);
-   FragColor = couleur;
+      
+   if(texnumero != 0)
+   {
+	  // calculer la couleur de la texture pour le fragment
+	  vec4 texcolor = texture(laTexture, AttribsIn.texCoord);
+
+	  // si la couleur est noir
+      if(texcolor.x < 0.1 && texcolor.y < 0.1 && texcolor.z < 0.1)
+      {
+         switch(afficheTexelNoir)
+         {
+            case 0: // afficher le noir noir
+  	 		   couleur = couleur * texcolor;
+  	           break;
+  	        case 1: // afficher le noir semi-colore
+  	           couleur = 0.5*(texcolor + couleur);
+  	 		   break;
+  	        case 2: // ne pas afficher le noir (transparent)
+  	 		   discard;
+         }
+     }
+   }
+   
+   FragColor = couleur; 
 }
+

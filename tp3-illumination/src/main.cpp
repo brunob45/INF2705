@@ -199,6 +199,7 @@ void chargerTextures()
 
    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+  
 }
 
 void chargerNuanceurs()
@@ -387,6 +388,15 @@ void initialiser()
       -1.0,  0.0,  0.0,   -1.0,  0.0,  0.0,  -1.0,  0.0,  0.0,   -1.0,  0.0,  0.0,   // P4,P7,P0,P3
        0.0,  0.0, +1.0,    0.0,  0.0, +1.0,   0.0,  0.0, +1.0,    0.0,  0.0, +1.0    // P4,P5,P7,P6
    };
+   GLfloat texcoord[4*4*6] = 
+   {	
+	   1.0/3, 2.0/3, 0.0, 2.0,   2.0/3, 2.0/3, 2.0, 2.0,   1.0/3, 1.0/3, 0.0, 0.0,   2.0/3, 1.0/3, 2.0, 0.0,
+       2.0/3, 2.0/3, 0.0, 2.0,   3.0/3, 2.0/3, 2.0, 2.0,   2.0/3, 1.0/3, 0.0, 0.0,   3.0/3, 1.0/3, 2.0, 0.0,	
+       1.0/3, 3.0/3, 0.0, 2.0,   2.0/3, 3.0/3, 2.0, 2.0,   1.0/3, 2.0/3, 0.0, 0.0,   2.0/3, 2.0/3, 2.0, 0.0,
+       0.0/3, 2.0/3, 0.0, 2.0,   1.0/3, 2.0/3, 2.0, 2.0,   0.0/3, 1.0/3, 0.0, 0.0,   1.0/3, 1.0/3, 2.0, 0.0,
+       1.0/3, 1.0/3, 0.0, 2.0,   2.0/3, 1.0/3, 2.0, 2.0,   1.0/3, 0.0/3, 0.0, 0.0,   2.0/3, 0.0/3, 2.0, 0.0,
+       2.0/3, 1.0/3, 0.0, 2.0,   3.0/3, 1.0/3, 2.0, 2.0,   2.0/3, 0.0/3, 0.0, 0.0,   3.0/3, 0.0/3, 2.0, 0.0
+   };
 
    // allouer les objets OpenGL
    glGenVertexArrays( 2, vao );
@@ -405,9 +415,12 @@ void initialiser()
    glBufferData( GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW );
    glVertexAttribPointer( locNormal, 3, GL_FLOAT, GL_FALSE, 0, 0 );
    glEnableVertexAttribArray(locNormal);
-   
-   // (partie 3) charger le VBO pour les coordonnées de texture
-   // ...
+
+   // (partie 3) charger le VBO pour les coordonnées de texture 
+   glBindBuffer( GL_ARRAY_BUFFER, vbo[2] );
+   glBufferData( GL_ARRAY_BUFFER, sizeof(texcoord), texcoord, GL_STATIC_DRAW );
+   glVertexAttribPointer( locTexCoord, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(locTexCoord);
 
    glBindVertexArray(0);
 
@@ -452,12 +465,26 @@ void afficherModele()
    {
    default:
       //std::cout << "Sans texture" << std::endl;
+   glDisable(GL_ALPHA_TEST);
+   //glEnable(GL_DEPTH_TEST);
+      glDisable( GL_TEXTURE_2D );
       break;
    case 1:
       //std::cout << "Texture DE" << std::endl;
+      // assigner chaque image dans une unitÃ© de texture diffÃ©rente
+   glEnable(GL_ALPHA_TEST);
+	  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+   //glDisable(GL_DEPTH_TEST);
+	  glActiveTexture( GL_TEXTURE0 ); // l'unitÃ© de texture 0
+	  glBindTexture( GL_TEXTURE_2D, textureDE );
       break;
    case 2:
       //std::cout << "Texture ECHIQUIER" << std::endl;
+      // assigner chaque image dans une unitÃ© de texture diffÃ©rente
+   glEnable(GL_ALPHA_TEST);
+   //glDisable(GL_DEPTH_TEST);
+	  glActiveTexture( GL_TEXTURE0 ); // l'unitÃ© de texture 0
+	  glBindTexture( GL_TEXTURE_2D, textureECHIQUIER );
       break;
    }
 
@@ -637,6 +664,7 @@ void FenetreTP::afficherScene()
    //glActiveTexture( GL_TEXTURE0 ); // activer la texture '0' (valeur de défaut)
    glUniform1i( loclaTexture, 0 ); // '0' => utilisation de GL_TEXTURE0
 
+   
    afficherModele();
 }
 
@@ -807,7 +835,7 @@ void FenetreTP::clavier( TP_touche touche )
       break;
 
    default:
-      std::cout << " touche inconnue : " << (char) touche << std::endl;
+      std::cout << " touche inconnue : <" << (char) touche << ">" << std::endl;
       imprimerTouches();
       break;
    }
