@@ -115,10 +115,12 @@ void main( void )
    
    if(typeIllumination == 1)
    {
+	  // Gouraud
       AttribsOut.couleur = calculerReflexion(L, N, O);
    }
    else
    {
+	  // Lambert ou Phong
       AttribsOut.couleur = Color;
    }
 }

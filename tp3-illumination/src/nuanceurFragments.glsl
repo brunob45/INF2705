@@ -60,7 +60,25 @@ out vec4 FragColor;
 
 float calculerSpot( in vec3 spotDir, in vec3 L )
 {
-   return( 0.0 );
+	float gamma = dot( L, spotDir );
+	float delta = cos(radians(LightSource[0].spotCutoff));
+	float c = LightSource[0].spotExponent;
+	float facteur = 0.0;
+	
+	if(gamma >  delta)
+	{
+		if(utiliseDirect)
+		{
+			float outer = pow(delta, (1.01+c/2));
+			facteur = (gamma - outer)/(delta - outer);
+		}
+		else
+		{
+			facteur = pow(gamma,  c);
+	    }
+	}
+	
+   return( facteur );
 }
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -70,7 +88,6 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 
    // calcul de la composante ambiante
    coul += FrontMaterial.ambient * LightSource[0].ambient;
-   //coul.a = AttribsIn.couleur.a;
 
    // calcul de l'Ã©clairage seulement si le produit scalaire est positif
    float NdotL = max( 0.0, dot( N, L ) );
@@ -92,20 +109,21 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 
 void main( void )
 {
-	
    vec3 L = normalize( AttribsIn.lumiDir ); // vecteur vers la source lumineuse
    vec3 N = normalize( AttribsIn.normale ); // vecteur normal
    //vec3 N = normalize( gl_FrontFacing ? AttribsIn.normale : -AttribsIn.normale );
    vec3 O = normalize( AttribsIn.obsVec );  // position de l'observateur
+   vec3 D = normalize( -LightSource[0].spotDirection );
 
    // assigner la couleur finale
+   vec4 couleur = AttribsIn.couleur;
    
    if(typeIllumination == 0 || typeIllumination == 2)
    {
-	  FragColor = calculerReflexion(L, N, O);
+	  // Lambert ou Phong
+	  couleur = calculerReflexion(L, N, O);
    }
-   else
-   {
-      FragColor = AttribsIn.couleur;
-   }
+   
+   couleur *= calculerSpot(D, L);
+   FragColor = couleur;
 }
