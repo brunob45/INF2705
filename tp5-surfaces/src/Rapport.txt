@@ -1,0 +1,25 @@
+Q2: Vous avez probablement remarqué que même en demandant un très grand
+    niveau de tessellation, le générateur de tessellation ne produira pas
+    des tessellation plus fine que le niveau maximum donné par la constante
+    GL_MAX_TESS_GEN_LEVEL.  (On peut obtenir la valeur de cette constante
+    avec glGet() et elle doit être au moins 64.)
+    Que doit-on alors faire si on veut, malgré tout, une tessellation deux
+    fois plus fine dans chaque direction?
+
+
+
+Q1: Comment implanter la visualisation d'une surface quelconque exprimée de
+    façon paramétrique: S(s,t) = (x(s,t),y(s,t),z(s,t))
+
+    Par exemple, une sphère:
+    S(s,t) = ( sin(t)*cos(s), sin(t)*sin(s), cos(t) );
+    avec s = 0 .. 2*PI, t = 0 .. PI.
+
+    ou une fonction plus complexe:
+
+    S(s,t) = ( (4/3)^s*sin(t)*sin(t)*cos(s),
+               (4/3)^s*sin(t)*sin(t)*sin(s),
+               (4/3)^s*sin(t)*cos(t) );
+    avec s = 0 .. 1, t = 0 .. 2*PI.
+
+
