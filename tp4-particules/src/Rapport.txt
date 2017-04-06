@@ -1,0 +1,30 @@
+Indice: pour bien répondre à ces deux questions, essayez de voir si votre
+réponse fonctionne dans votre application. (Pour chacune, ce ne sont que
+quelques lignes à modifier dans le nuanceur!)
+
+
+Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran.
+    Leur taille est donnée par la variable gl_PointSize.
+    i) Comment faire pour que la taille d'un point varie de façon inverse
+    à sa distance du plan avant du volume de visualisation?
+    ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+
+	On peut calculer la profondeur des particules de la même facon que dans le TP2,
+	avec les planetes. Puis, on n'a qu'a multiplier la valeur obtenue par la bonne
+	constante, que nous affectons à la valeur gl_PointSize.
+	
+	
+
+Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une
+    matrice de rotation sur les quatre sommets.
+    i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice
+    de rotation sur les coordonnées de texture plutôt que sur les
+    coordonnées des sommets?
+    ii) Quel problème pourrait-on alors observer et comment devrait-il être
+    corrigé?
+
+	Oui, cela est faisable. Par contre, il faudrait faire attention, puisque
+	la texture que nous utilisons n'est pas centrée (on utilise différentes
+	parties afin de générer une animation). Il faudrait ajuster le centre 
+	de rotation pour qu'il se trouve au centre du morceau utilisé, et non au
+	centre de l'image utilisé pour générer la texture.

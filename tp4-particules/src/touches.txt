@@ -1,0 +1,25 @@
+    q:  Quitter l'application
+    x:  Activer/désactiver l'affichage des axes
+    v:  Recharger les fichiers des nuanceurs et recréer le programme
+    j:  Incrémenter le nombre de particules
+    u:  Décrémenter le nombre de particules
+    DROITE:  Augmenter la dimension de la boîte en X
+    GAUCHE:  Diminuer la dimension de la boîte en X
+    BAS:  Augmenter la dimension de la boîte en Y
+    HAUT:  Diminuer la dimension de la boîte en Y
+    PAGEPREC:  Augmenter la dimension de la boîte en Z
+    PAGESUIV:  Diminuer la dimension de la boîte en Z
+    0:  Remettre le puits à la position (0,0,0)
+    PLUS:  Avancer la caméra
+    MOINS:  Reculer la caméra
+    b:  Incrémenter la gravité
+    h:  Décrémenter la gravité
+    l:  Incrémenter la durée de vie maximale
+    k:  Décrémenter la durée de vie maximale
+    t:  Changer la texture utilisée: 0-aucune, 1-étincelle, 2-oiseau, 3-leprechaun
+    p:  Permuter la projection: perspective ou orthogonale
+    g:  Permuter l'affichage en fil de fer ou plein
+    ESPACE:  Mettre en pause ou reprendre l'animation
+    BOUTON_GAUCHE:  Manipuler la caméra
+    BOUTON_DROIT:  Déplacer le puits
+    Molette:  Changer la distance de la caméra
