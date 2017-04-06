@@ -101,6 +101,13 @@ float FctText( vec2 texCoord )
    return 0.0; // à modifier!
 }
 
+vec3 calcNorm(vec2 uv, float delta)
+{
+	return vec3 ( FctMath(vec2(uv.x+delta, uv.y)) - FctMath(vec2(uv.x-delta, uv.y)),
+	              FctMath(vec2(uv.x, uv.y+delta)) - FctMath(vec2(uv.x, uv.y-delta)),
+	              -2*delta) / (2*delta);
+}
+
 void main( void )
 {
    const float eps = 0.01;
@@ -114,18 +121,18 @@ void main( void )
 #if ( INDICEFONCTION != 0 )
 
    // déplacement selon la fonction mathématique (partie 1)
-   // ....z = FctMath( ... );
+   posModel.z = FctMath( posModel.xy );
 
    // calculer la normale
-   vec3 N = vec3(0.,0.1.); // à modifier
+   
+   vec3 N = calcNorm(posModel.xy, 0.01); //vec3(0.,0.1, 0.); // à modifier
 
 #else
-
    // déplacement selon la texture (partie 2)
    // ....z = FctText( ... );
 
    // calculer la normale
-   vec3 N = vec3(0.,0.1.); // à modifier
+   vec3 N = vec3(0.,0.1, 0.); // à modifier
 
 #endif
 

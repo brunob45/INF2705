@@ -40,10 +40,10 @@ void main()
    // émettre les sommets
    for ( int i = 0 ; i < gl_in.length() ; ++i )
    {
-      //AttribsOut.texCoord = AttribsIn[i].texCoord;
-      //AttribsOut.normale = AttribsIn[i].normale;
+      AttribsOut.texCoord = AttribsIn[i].texCoord;
+      AttribsOut.normale = AttribsIn[i].normale;
 
-      // initialiser gl_ClipDistance[] pour que le découpage soit fait par OpenGL
+      // initialiser gl_ClipDistance[] pour que le découpage psoit fait par OpenGL
       vec4 planCoupeHaut = vec4( 0.0, 0.0, -1.0, bDim.z );
       vec4 planCoupeBas = vec4( 0.0, 0.0, 1.0, bDim.z );
       gl_ClipDistance[0] = dot( planCoupeHaut, gl_in[i].gl_Position );
@@ -55,15 +55,18 @@ void main()
       // vecteur de la direction vers la lumière
       for ( int j = 0 ; j < 2 ; ++j )
       {
-         //if ( LightSource.position[j].w != 0.0 ) // lumière positionnelle en (x/w,y/w,z/w)
-         //  AttribsOut.lumiDir[j] = ...;
-         //else                                    // lumière directionnelle dans la direction (x,y,z)
-         //  AttribsOut.lumiDir[j] = ...;
+         if ( LightSource.position[j].w != 0.0 ) // lumière positionnelle en (x/w,y/w,z/w)
+           AttribsOut.lumiDir[j] = vec3( ( matrVisu * LightSource.position[j] ).xyz - posVisu.xyz) / LightSource.position[j].w;
+         else                                    // lumière directionnelle dans la direction (x,y,z)
+           AttribsOut.lumiDir[j] = vec3( ( matrVisu * LightSource.position[j] ).xyz - posVisu.xyz) / LightSource.position[j].w;
          //ou mieux encore: AttribsOut.lumiDir[j] = ( LightSource.position[j].w != 0.0 ) ? ... : ...;
       }
 
       // vecteur de la direction vers l'observateur
-      // AttribsOut.obsVec = ...;
+      AttribsOut.obsVec = ( LightModel.localViewer ?
+			 normalize(-posVisu.xyz) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la camÃ©ra
+			 vec3( 0.0, 0.0, 1.0 ) ); // on considÃ¨re que l'observateur (la camÃ©ra) est Ã  l'infini dans la direction (0,0,1)
+
 
       // terminer la transformation standard du sommet
       gl_Position = matrProj * posVisu;

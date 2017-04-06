@@ -1,7 +1,6 @@
 // Prénoms, noms et matricule des membres de l'équipe:
-// - Prénom1 NOM1 (matricule1)
-// - Prénom2 NOM2 (matricule2)
-#warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
+// - Bruno BOUSQUET (1798492)
+//#warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
 
 #include <iostream>
 #include "inf2705.h"
@@ -243,7 +242,7 @@ void chargerNuanceurs()
          ProgNuanceur::afficherLogCompile( nuanceurObj );
          delete [] chainesSommets[1];
       }
-#if 0
+#if 1
       // À ACTIVER (enlever le #if 0 et le #endif)
       // attacher le nuanceur de controle de la tessellation
       const GLchar *chainesTessCtrl[2] = { preambulechar, ProgNuanceur::lireNuanceur( "nuanceurTessCtrl.glsl" ) };
@@ -493,8 +492,8 @@ void afficherModele()
    glPatchParameteri( GL_PATCH_VERTICES, 4 );
 
    // À MODIFIER (utiliser des GL_PATCHES)
-   glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-   //glDrawArrays( GL_PATCHES, 0, 4 ); // UTILISER des GL_PATCHES plutôt que des GL_TRIANGLES
+   //glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+   glDrawArrays( GL_PATCHES, 0, 4 ); // UTILISER des GL_PATCHES plutôt que des GL_TRIANGLES
 
    glBindVertexArray( 0 );
 
