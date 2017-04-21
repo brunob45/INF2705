@@ -97,14 +97,23 @@ float FctMath( vec2 uv )
 // déplacement selon la texture
 float FctText( vec2 texCoord )
 {
-   //...
-   return 0.0; // à modifier!
+   vec4 tex = texture(textureDepl, texCoord);
+   return length( tex ) * facteurZ / 10;
+}
+
+float FctZ( vec2 uv )
+{
+#if ( INDICEFONCTION != 0 )
+	return FctMath( uv );
+#else
+	return FctText( uv );
+#endif
 }
 
 vec3 calcNorm(vec2 uv, float delta)
 {
-	return vec3 ( FctMath(vec2(uv.x+delta, uv.y)) - FctMath(vec2(uv.x-delta, uv.y)),
-	              FctMath(vec2(uv.x, uv.y+delta)) - FctMath(vec2(uv.x, uv.y-delta)),
+	return vec3 ( FctZ(vec2(uv.x+delta, uv.y)) - FctZ(vec2(uv.x-delta, uv.y)),
+	              FctZ(vec2(uv.x, uv.y+delta)) - FctZ(vec2(uv.x, uv.y-delta)),
 	              -2*delta) / (2*delta);
 }
 
@@ -116,25 +125,12 @@ void main( void )
    vec4 posModel = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position, gl_in[3].gl_Position );
 
    // générer (en utilisant posModel.xy) les coordonnées de texture plutôt que les interpoler
-   //AttribsOut.texCoord = ...;
+   AttribsOut.texCoord = posModel.xy;
 
-#if ( INDICEFONCTION != 0 )
-
-   // déplacement selon la fonction mathématique (partie 1)
-   posModel.z = FctMath( posModel.xy );
-
+	// déplacement en z
+	posModel.z = FctZ( posModel.xy );
    // calculer la normale
-   
-   vec3 N = calcNorm(posModel.xy, 0.01); //vec3(0.,0.1, 0.); // à modifier
-
-#else
-   // déplacement selon la texture (partie 2)
-   // ....z = FctText( ... );
-
-   // calculer la normale
-   vec3 N = vec3(0.,0.1, 0.); // à modifier
-
-#endif
+	vec3 N = calcNorm( posModel.xy, eps );
 
 #if ( AFFICHENORMALES == 1 )
    AttribsOut.normale = N;

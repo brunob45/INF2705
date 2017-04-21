@@ -55,11 +55,9 @@ void main()
       // vecteur de la direction vers la lumière
       for ( int j = 0 ; j < 2 ; ++j )
       {
-         if ( LightSource.position[j].w != 0.0 ) // lumière positionnelle en (x/w,y/w,z/w)
-           AttribsOut.lumiDir[j] = vec3( ( matrVisu * LightSource.position[j] ).xyz - posVisu.xyz) / LightSource.position[j].w;
-         else                                    // lumière directionnelle dans la direction (x,y,z)
-           AttribsOut.lumiDir[j] = vec3( ( matrVisu * LightSource.position[j] ).xyz - posVisu.xyz) / LightSource.position[j].w;
-         //ou mieux encore: AttribsOut.lumiDir[j] = ( LightSource.position[j].w != 0.0 ) ? ... : ...;
+		 float w = LightSource.position[j].w == 0.0 ? 1.0 : LightSource.position[j].w;
+		 
+		 AttribsOut.lumiDir[j] = ( matrVisu * (LightSource.position[j] / w) ).xyz - posVisu.xyz;
       }
 
       // vecteur de la direction vers l'observateur

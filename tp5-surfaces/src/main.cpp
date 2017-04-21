@@ -421,7 +421,19 @@ void conclure()
 void definirProjection( int OeilMult, int w, int h ) // 0: mono, -1: oeil gauche, +1: oeil droit
 {
    // partie 2: utiliser plutôt Frustum() pour le stéréo
-   matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, vue.zavant, vue.zarriere );
+   //matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, vue.zavant, vue.zarriere );
+   
+   const GLdouble ppp = 100.0; // pixels par pouce
+   GLdouble oeilDecalage = OeilMult * vue.dip/2.0;
+   GLdouble proportionProfondeur = vue.zavant / vue.zecran;  // la profondeur du plan de parallaxe nulle
+
+   matrProj.Frustum( (-0.5 * w / ppp - oeilDecalage ) * proportionProfondeur,
+                     ( 0.5 * w / ppp - oeilDecalage ) * proportionProfondeur,
+                     (-0.5 * h / ppp                ) * proportionProfondeur,
+                     ( 0.5 * h / ppp                ) * proportionProfondeur,
+                     vue.zavant, vue.zarriere );
+   matrProj.Translate( -oeilDecalage, 0.0, 0.0 );
+   glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
 }
 
 void afficherDecoration()
@@ -572,16 +584,43 @@ void FenetreTP::afficherScene()
 
    case 1: // stéréo anaglyphe
       // partie 2: à modifier pour afficher en anaglyphe
-      definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+      // Afficher rouge (gauche)
+      definirProjection( -1, largeur_, hauteur_ );
+      glColorMask( GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE );
       afficherModele();
+      
+      // Afficher bleu (droite)
+      glClear( GL_DEPTH_BUFFER_BIT );
+      definirProjection( +1, largeur_, hauteur_ );
+      glColorMask( GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE );
+      afficherModele();
+
+	  // Remettre les couleurs normales
+      glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
       break;
 
    case 2: // stéréo double
       // partie 2: à modifier pour afficher en stéréo double
-      definirProjection( 0, largeur_, hauteur_ );
+      /* Moitie gauche
+       * (0,h)  (l/2,h)
+       * (0,0)	(l/2,0)
+       */
+      glViewport(0, 0, largeur_/2, hauteur_);
+      definirProjection( -1, largeur_/2, hauteur_ );
       glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
       afficherModele();
+      
+      /* Moitie droite
+       * (l/2,h)  (l,h)
+       * (l/2,0)  (l,0)
+       */
+      glViewport(largeur_/2, 0, largeur_/2, hauteur_);
+      definirProjection( -1, largeur_/2, hauteur_ );
+      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+      afficherModele();
+      
+      // Remettre le viewport par defaut
+      redimensionner(largeur_, hauteur_ );
       break;
    }
 }
@@ -612,6 +651,7 @@ void FenetreTP::clavier( TP_touche touche )
       break;
 
    case TP_i: // Augmenter le niveau de tessellation interne
+      TessLevelInner++;
       std::cout << " TessLevelInner=" << TessLevelInner << " TessLevelOuter=" << TessLevelOuter << std::endl;
       glPatchParameteri( GL_PATCH_DEFAULT_INNER_LEVEL, TessLevelInner );
       break;
@@ -622,6 +662,7 @@ void FenetreTP::clavier( TP_touche touche )
       break;
 
    case TP_o: // Augmenter le niveau de tessellation externe
+	  TessLevelOuter++;
       std::cout << " TessLevelInner=" << TessLevelInner << " TessLevelOuter=" << TessLevelOuter << std::endl;
       glPatchParameteri( GL_PATCH_DEFAULT_OUTER_LEVEL, TessLevelOuter );
       break;
@@ -632,7 +673,7 @@ void FenetreTP::clavier( TP_touche touche )
       break;
 
    case TP_u: // Augmenter les deux niveaux de tessellation
-      TessLevelInner = TessLevelOuter;
+      TessLevelInner = ++TessLevelOuter;
       std::cout << " TessLevelInner=" << TessLevelInner << " TessLevelOuter=" << TessLevelOuter << std::endl;
       glPatchParameteri( GL_PATCH_DEFAULT_OUTER_LEVEL, TessLevelOuter );
       glPatchParameteri( GL_PATCH_DEFAULT_INNER_LEVEL, TessLevelInner );
